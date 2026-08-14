@@ -1,0 +1,56 @@
+services:
+  frontend: 
+    build:
+      context: ./frontend
+    container_name: taskflow-frontend
+    ports: 
+      - 8080:80
+    depends_on:
+      - backend
+    networks:
+      - taskflow-frontend-network
+  backend:
+    build:
+      context: ./backend
+    container_name: taskflow-backend
+    environment:
+      DB_HOST: db
+      DB_NAME: taskflow
+      DB_USER: postgres
+      DB_PASSWORD: veepass123
+      DB_PORT: 5432
+      PORT: 5000
+    ports: 
+      - 6455:5000
+    networks:
+      - taskflow-frontend-network      
+      - taskflow-backend-network      
+    restart: always
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16-alpine
+    container_name: taskflow-db
+    environment:
+      DB_NAME: taskflow
+      DB_USER: postgres
+      DB_PASSWORD: veepass123
+    ports: 
+      - 5200:5432
+    networks:
+      - taskflow-backend-network
+    volumes:
+      - t_postgres_data:/var/lib/postgresql/data
+      - ./database/initsql:/docker-entrypoint-initdb.d/initsql
+
+volumes: 
+  t_postgres_data:
+
+networks: 
+  taskflow-frontend-network: 
+    driver: bridge
+    name: taskflow-frontend-network
+  taskflow-backend-network: 
+    driver: bridge
+    name: taskflow-backend-network
