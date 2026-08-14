@@ -33,9 +33,9 @@ services:
     image: postgres:16-alpine
     container_name: taskflow-db
     environment:
-      DB_NAME: taskflow
-      DB_USER: postgres
-      DB_PASSWORD: veepass123
+      POSTGRES_DB: taskflow
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: veepass123
     ports: 
       - 5200:5432
     networks:
